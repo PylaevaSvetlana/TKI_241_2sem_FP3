@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <algorithm>
 
 using namespace std;
 
@@ -12,30 +13,19 @@ int main()
 
 	map<int, vector<int>> M;
 
-	for (auto i = 0; i < V2.size(); i++)
-	{
-		const int k = V2[i] % 10;
-		M[k].push_back(V2[i]);
-	}
+	for_each(V2.begin(), V2.end(), [&M](int num) {M[num % 10].push_back(num); });
 
-	for (int i = 0; i < V1.size(); i++)
-	{
-		const auto last_num = V1[i] % 10;
-		if (M[last_num].size() != 0)
+	for_each(V1.begin(), V1.end(), [&M, &V](int num) 
+		{ const auto last_num = num % 10;
+		if (!M[last_num].empty())
 		{
-			const auto last = M[last_num].size() - 1;
-			pair<int, int> temp{ V1[i], M[last_num][last] };
+			V.emplace_back(num, M[last_num].back());
 			M[last_num].pop_back();
-			V.push_back(temp);
 		}
-	}
+		});
 
 	cout <<"The size: " << V.size() << endl;
-	for (auto i = 0; i < V.size(); i++)
-	{
-		cout << V[i].first << ",";
-		cout << V[i].second << "   ";
-	}
+	for_each(V.begin(), V.end(), [](auto p) {cout << p.first << "," << p.second << "   "; });
 
 	return 0;
 }
